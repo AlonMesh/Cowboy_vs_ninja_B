@@ -14,7 +14,7 @@ namespace ariel {
 
         public:
             Team(Character leader) : leader(leader) {
-                this->champions.push_back(leader);
+                this->champions.push_back(leader); //
             }
 
             //destructor
