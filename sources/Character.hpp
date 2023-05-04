@@ -8,12 +8,12 @@ namespace ariel {
     class Character {
         private:
             string name;
-            Point pos;
+            Point location;
             int healthPoints;
         
         public:
-            Character(string name, Point pos, int healthPoints) : name(name), pos(pos), healthPoints(healthPoints) {} ;
-            Character() : name(""), healthPoints(100), pos(Point(0,0)) {} ;
+            Character(string name, Point location, int healthPoints) : name(name), location(location), healthPoints(healthPoints) {} ;
+            Character() : name(""), healthPoints(100), location(Point(0,0)) {} ;
 
             // Returns true if the Character is still alive (more than 0 hp)
             bool isAlive();

@@ -8,7 +8,7 @@ namespace ariel {
             int ammo;
 
         public:
-        Cowboy(string name, Point pos) : Character(name, pos, 110), ammo(6) {};
+        Cowboy(string name, Point location) : Character(name, location, 110), ammo(6) {};
         Cowboy() : Character(), ammo(0) {};
 
         

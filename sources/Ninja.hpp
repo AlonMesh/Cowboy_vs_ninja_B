@@ -10,7 +10,7 @@ namespace ariel {
         
         public:
             // "Superior" Consturctor of all ninjas
-            Ninja(string name, Point pos, int healthPoints, int speed) : Character(name, pos, healthPoints), speed(speed) {};
+            Ninja(string name, Point location, int healthPoints, int speed) : Character(name, location, healthPoints), speed(speed) {};
             
             // Moving throw a given enemy
             void move(Character* enemy);

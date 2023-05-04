@@ -12,11 +12,15 @@ namespace ariel {
             Point(double x_value, double y_value) : x_value(x_value), y_value(y_value) {} ;
             Point() : x_value(0.0), y_value(0.0) {};
 
-            int distance(Point other);
+            double distance(Point other);
 
             void print();
 
             Point moveTowards(Point currentPoint, Point targetPoint, int distance);
+
+            double get_x();
+
+            double get_y();
     };
 }
 #endif

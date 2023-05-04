@@ -32,6 +32,10 @@ namespace ariel {
             void print();
 
     };
+
+    class Team2 : public Team {
+        void add(Character* champion);
+    };
 }
 
 #endif
