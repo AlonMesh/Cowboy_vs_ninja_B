@@ -99,26 +99,39 @@ TEST_CASE("moveTowards function") {
 TEST_CASE("Character initialization") {
     Character champ("Champ", Point(0, 0), 100);
 
-    // Verify that the name, location, and health points were set correctly
+    // Name, location, and health points were set correctly
     CHECK_EQ(champ.getName(), "Champ");
     CHECK_EQ(champ.getLocation(), Point(0, 0));
     CHECK_EQ(champ.getHealthPoints(), 100);
 
-    // Verify that the Character is alive
+    // The created Character is alive
     CHECK(champ.isAlive());
-
-    // Additional tests?
 }
 
 TEST_CASE("hit of Character") {
     Character champ("Champ", Point(0, 0), 100);
     
-    CHECK_EQ(champ.isAlive(), true);
+    // Hitting a 'champ' by 20 HP will leave him with 80 and still alive
     champ.hit(20);
-    // a test with getHP?
-    CHECK_EQ(champ.isAlive(), true);
-    champ.hit(100);
-    // throw error if hitting a dead Character?
+    CHECK_EQ(champ.getHealthPoints(), 80);
+    CHECK(champ.isAlive());
+
+    // Hitting a 'champ' by 80 HP will leave him with 0 and kill him
+    champ.hit(80);
+    CHECK_EQ(champ.getHealthPoints(), 80);
+    CHECK_FALSE(champ.isAlive());
+
+    // Can't hit a dead Character
+    CHECK_THROWS(champ.hit(10));
+
+    Character champ("Champ", Point(0, 0), 100); // Reset
+
+    // Can't hit with a negative number (No heals allowed)
+    CHECK_THROWS(champ.hit(-10));
+
+    // Hitting a Character with more HP than he has left will kill him
+    CHECK_NOTHROW(champ.hit(110));
+    CHECK_FALSE(champ.isAlive());
 }
 
 TEST_CASE("distance of Character") {
@@ -126,38 +139,43 @@ TEST_CASE("distance of Character") {
     Character c2("Coco", Point(1, 0), 100);
     Character c3("Candy", Point(0, 0), 100);
 
+    // Distance is simetric
     CHECK_EQ(c1.distance(&c2), c2.distance(&c1));
+
+    // Character's distance is like Point's distance
     CHECK_EQ(c1.distance(&c2), c1.getLocation().distance(c2.getLocation()));
+
+    // A 
     CHECK_EQ(c1.distance(&c3), 0.0);
 }
 
-TEST_CASE("Cowboy init") {
+TEST_CASE("Cowboy initialization") {
     Cowboy cowboy1("Cow", Point());
 
-    // Cowboy created with 110 hp
-    CHECK_EQ(cowboy1.getHealthPoints(), 110);
+    // Character's fields are like expected when creating a Cowboy
+    CHECK_EQ(cowboy1.getName(), "Cow");
+    CHECK_EQ(cowboy1.getLocation(), Point(0, 0));
+    CHECK_EQ(cowboy1.getHealthPoints(), 110); // A cowboy has 110 HP
 
-    // Cowboy created with 6 bullets
+    // Cowboy's fields are like expected when creating a Cowboy
     CHECK_EQ(cowboy1.getAmmo(), 6);
-    CHECK_EQ(cowboy1.hasboolets(), true);
+    CHECK(cowboy1.isAlive());
+    CHECK(cowboy1.hasboolets());
 
     // Clerify that Cowboy is an instance of Character. 
     // Implemented by downcast a Character pointer to Cowboy pointer.
     Character* character_ptr = new Cowboy();
     Cowboy* cowboy_ptr = dynamic_cast<Cowboy*>(character_ptr);
     CHECK(cowboy_ptr != nullptr);
-
-    // more?
 }
 
 TEST_CASE("Cowboy shooting") {
-    // If both tests above were pass, then cowboy2 has the same values (but location)
     Cowboy cowboy1("Cow", Point());
     Cowboy cowboy2("Enemy", Point(1, 1));
 
     cowboy1.shoot(&cowboy2);
 
-    // cowboy1 supposed to lost 1 bullet; cowboy2 supposed to lost 10 hp.
+    // 'cowboy1' shoots 'cowboy2' and uses 1 bullet; 'cowboy2' loses 10 HP.
     CHECK_EQ(cowboy1.getAmmo(), 5);
     CHECK_EQ(cowboy1.hasboolets(), true);
     CHECK_EQ(cowboy2.getHealthPoints(), 100);
@@ -167,61 +185,68 @@ TEST_CASE("Cowboy shooting") {
         cowboy1.shoot(&cowboy2);
     }
 
+    // 'cowboy1' has no bullets left
     CHECK_EQ(cowboy1.getAmmo(), 0);
     CHECK_EQ(cowboy1.hasboolets(), false);
 
-    // A cowboy can't shoot if he has no bullets.
-    CHECK_THROWS(cowboy1.shoot(&cowboy2)); // which error?
+    // Cowboy can't shoot if he has no bullets
+    CHECK_THROWS(cowboy1.shoot(&cowboy2)); // which error?***********
 
-    // Reloading set ammo to 6 and hasboolets() to true.
+    // 'cowboy1' reloads and has 6 bullets again
     cowboy1.reload();
     CHECK_EQ(cowboy1.getAmmo(), 6);
     CHECK_EQ(cowboy1.hasboolets(), true);
 
-    // A cowboy can't shoot himself
-    CHECK_THROWS(cowboy1.shoot(&cowboy1));
-
     Cowboy cowboy3("KillMe", Point(2, 2)); // 110 hp
 
+    // 'cowboy1' shoots 'cowboy3' multiple times until 'cowboy3' dies
     for (size_t i = 0; i < 12; i++) {
         cowboy1.shoot(&cowboy3);
         cowboy1.reload();
     }
 
-    // Make sure cowboy3 did die
+    // 'cowboy3' is dead
     CHECK_EQ(cowboy3.getHealthPoints(), 0); 
     CHECK_EQ(cowboy3.isAlive(), false);
 
-    // Cannot shoot a dead Character
+    // Edge cases:
+    // Cowboy can't shoot a dead Character
     CHECK_THROWS(cowboy1.shoot(&cowboy3));
+
+    // Cowboy can't shoot himself
+    CHECK_THROWS(cowboy1.shoot(&cowboy1));
+
+    // Cowboy can't reload() when he already has full ammo
+    cowboy1.shoot(&cowboy2);
+    cowboy1.reload();
+    CHECK_THROWS(cowboy1.reload());
 }
 
-TEST_CASE("Ninja init") {
-    // All types of ninjas have the wished HP and speed
-
+TEST_CASE("Ninja Initialization") {
+    // All types of ninjas have the expected HP and speed
     YoungNinja ninja1("a", Point(1, 1));
     CHECK_EQ(ninja1.getHealthPoints(), 100);
     CHECK_EQ(ninja1.getSpeed(), 14);
 
     TrainedNinja ninja2("b", Point(2, 2));
-    CHECK_EQ(ninja1.getHealthPoints(), 120);
-    CHECK_EQ(ninja1.getSpeed(), 12);
+    CHECK_EQ(ninja2.getHealthPoints(), 120);
+    CHECK_EQ(ninja2.getSpeed(), 12);
 
     OldNinja ninja3("c", Point(3, 3));
-    CHECK_EQ(ninja1.getHealthPoints(), 150);
-    CHECK_EQ(ninja1.getSpeed(), 8);
+    CHECK_EQ(ninja3.getHealthPoints(), 150);
+    CHECK_EQ(ninja3.getSpeed(), 8);
 
     // All types of ninjas are instance of Ninja class
-    Ninja* ninja_ptr = new YoungNinja();
-    YoungNinja* young_ptr = dynamic_cast<YoungNinja*>(ninja_ptr);
+    Ninja* ninja_ptr1 = new YoungNinja();
+    YoungNinja* young_ptr = dynamic_cast<YoungNinja*>(ninja_ptr1);
     CHECK(young_ptr != nullptr);
 
-    Ninja* ninja_ptr = new YoungNinja();
-    TrainedNinja* trained_ptr = dynamic_cast<TrainedNinja*>(ninja_ptr);
+    Ninja* ninja_ptr2 = new YoungNinja();
+    TrainedNinja* trained_ptr = dynamic_cast<TrainedNinja*>(ninja_ptr2);
     CHECK(trained_ptr != nullptr);
 
-    Ninja* ninja_ptr = new YoungNinja();
-    OldNinja* old_ptr = dynamic_cast<OldNinja*>(ninja_ptr);
+    Ninja* ninja_ptr3 = new YoungNinja();
+    OldNinja* old_ptr = dynamic_cast<OldNinja*>(ninja_ptr3);
     CHECK(old_ptr != nullptr);
 }
 
