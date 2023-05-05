@@ -17,21 +17,27 @@ namespace ariel {
             
             // Deal massive damage to an enemey if he's close enough
             void slash(Character* enemy);
+
+            // mine
+            int getSpeed();
     };
 
     class YoungNinja : public Ninja {
         public:
-            YoungNinja(string name, Point pos) : Ninja(name, pos, 100, 14) {};
+            YoungNinja(string name, Point location) : Ninja(name, location, 100, 14) {};
+            YoungNinja() : Ninja("", Point(), 100, 14) {};
     };
 
         class TrainedNinja : public Ninja {
         public:
-            TrainedNinja(string name, Point pos) : Ninja(name, pos, 120, 12) {};
+            TrainedNinja(string name, Point location) : Ninja(name, location, 120, 12) {};
+            TrainedNinja() : Ninja("", Point(), 120, 12) {};
     };
 
         class OldNinja : public Ninja {
         public:
-            OldNinja(string name, Point pos) : Ninja(name, pos, 150, 8) {};
+            OldNinja(string name, Point location) : Ninja(name, location, 150, 8) {};
+            OldNinja() : Ninja("", Point(), 150, 8) {};
     };
 }
 

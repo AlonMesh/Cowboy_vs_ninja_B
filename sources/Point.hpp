@@ -16,7 +16,10 @@ namespace ariel {
 
             void print();
 
-            Point moveTowards(Point currentPoint, Point targetPoint, int distance);
+            static Point moveTowards(Point currentPoint, Point targetPoint, int distance);
+
+            // mine
+            bool isOnLine(Point point1, Point point2);
 
             double get_x();
 

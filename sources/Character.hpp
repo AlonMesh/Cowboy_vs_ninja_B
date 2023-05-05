@@ -14,6 +14,7 @@ namespace ariel {
         public:
             Character(string name, Point location, int healthPoints) : name(name), location(location), healthPoints(healthPoints) {} ;
             Character() : name(""), healthPoints(100), location(Point(0,0)) {} ;
+            virtual ~Character() {};
 
             // Returns true if the Character is still alive (more than 0 hp)
             bool isAlive();
@@ -29,6 +30,9 @@ namespace ariel {
 
             // Returns the position of the Character
             Point getLocation();
+
+            // mine
+            int getHealthPoints();
 
             //edit
             void print();

@@ -9,7 +9,7 @@ namespace ariel {
 
         public:
         Cowboy(string name, Point location) : Character(name, location, 110), ammo(6) {};
-        Cowboy() : Character(), ammo(0) {};
+        Cowboy() : Character(), ammo(6) {};
 
         
         // Get a pointer to an enemy, deal him minor damge; decrease self ammo by one
@@ -20,6 +20,9 @@ namespace ariel {
 
         // Load 6 bullets
         void reload();
+
+        //mine
+        int getAmmo();
     };
 }
 
