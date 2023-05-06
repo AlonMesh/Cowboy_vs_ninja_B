@@ -139,19 +139,15 @@ TEST_CASE("Character hit()") {
     delete champ;
 }
 
-TEST_CASE("distance of Character") { // *************
-    Character c1("Champ", Point(0, 0), 100);
-    Character c2("Coco", Point(1, 0), 100);
-    Character* c3 = new Character("Candy", Point(0, 0), 100);
+TEST_CASE("distance of Character") {
+    Character* c1 = new Character("Champ", Point(0, 0), 100);
+    Character* c2 = new Character("Coco", Point(1, 0), 100);
 
-    // Distance is simetric
-    CHECK_EQ(c1.distance(&c2), c2.distance(&c1));
+    // Character's distance is like Point's distance. That's enough cuz it's based on other tests
+    CHECK_EQ(c1->distance(c2), c1->getLocation().distance(c2->getLocation()));
 
-    // Character's distance is like Point's distance
-    CHECK_EQ(c1.distance(&c2), c1.getLocation().distance(c2.getLocation()));
-
-    // A 
-    CHECK_EQ(c1.distance(c3), 0.0);
+    delete c1;
+    delete c2;
 }
 
 TEST_CASE("Cowboy initialization") {
@@ -314,15 +310,13 @@ TEST_CASE("Ninja move and slash functions") {
     delete enemy2;
 }
 
-TEST_CASE("team init") {
+TEST_CASE("team Initialization") {
     Cowboy* cowboy1 = new Cowboy("Champ", Point());
     Team team1(cowboy1);
 
     // Basic funcitons:
     CHECK_EQ(team1.stillAlive(), 1);
     CHECK_EQ(team1.getLeader(), cowboy1);
-
-    //more???
 
     delete cowboy1;
 }
@@ -343,7 +337,7 @@ TEST_CASE("Team add() and stillAlive() functions") {
 
     // Team can't contain more than 10 Characters
     for (size_t i = 0; i < 8; i++) {
-        team1.add(new Cowboy("Same", Point()));
+        team1.add(new Cowboy("Generic Cowboy", Point()));
     }
 
     CHECK_EQ(team1.stillAlive(), 10);
@@ -360,16 +354,72 @@ TEST_CASE("Team add() and stillAlive() functions") {
     CHECK_THROWS(Team(cowboy1)); // Leader
     CHECK_THROWS(Team(cowboy2)); // Member
 
-    // If a Character is dead, he is no longer part of the team
+    // If a member is dead, he is no longer part of the team
     cowboy2->hit(999);
     CHECK_EQ(team1.stillAlive(), 9);
 
-    // If the leader of a team is dead and there are more members, there will be new leader
+    // If The leader is dead, he is no longer part of the team
     cowboy1->hit(999);
-    CHECK_NE(team1.getLeader(), cowboy1);
-    CHECK_NE(team1.getLeader(), nullptr);
+    CHECK_EQ(team1.stillAlive(), 8);
+
+    delete cowboy1;
+    delete cowboy2;
+    delete cowboy3;
 }
 
 TEST_CASE("Team attack() function") {
+    // To make things easier, team1 contains only cowboys and team2 contains only ninjas
+    // Ofc any team can contains both
+    Cowboy* cowboy1 = new Cowboy("Champ", Point(1, 1));
+    Team team1(cowboy1);
 
+    for (size_t i = 0; i < 5; i++) {
+        team1.add(new Cowboy("Generic Cowboy", Point()));
+    }
+
+    YoungNinja* ninja1 = new YoungNinja("Yu", Point(30, 30));
+    YoungNinja* ninja2 = new YoungNinja("Gi", Point(31, 31));
+    YoungNinja* ninja3 = new YoungNinja("Oh", Point(33, 33));
+    Team team2(ninja1);
+    team2.add(ninja2);
+    team2.add(ninja3);
+
+    // A team can't attack() itself
+    CHECK_THROWS(team1.attack(&team1));
+
+    // If a ninja is too far he won't deal damage (in this test that's the only time ninjas attack)
+    team2.attack(&team1);
+    CHECK_EQ(cowboy1->getHealthPoints(), 110); // 'cowboy1' is the victim but he didn't get damaged.
+
+    // 'team1' has 60 guaranteed damage in attack()
+    // The only victim this round is 'ninja1' who has 100 HP
+    team1.attack(&team2);
+    CHECK_EQ(ninja1->getHealthPoints(), 40);
+    CHECK_EQ(ninja2->getHealthPoints(), 100);
+    CHECK_EQ(ninja3->getHealthPoints(), 100);
+
+    // In this round, 'ninja1' is supposed to die, then 'ninja2' will be the new victim
+    team1.attack(&team2);
+    CHECK_FALSE(ninja1->isAlive());
+    CHECK_EQ(ninja2->getHealthPoints(), 80);
+    CHECK_EQ(team2.getLeader(), ninja1); // Altough he's dead. Readme rules.
+
+    // New leader will be set only if the current leader is dead at the start of the round
+    team1.attack(&team2);
+    CHECK_EQ(team2.getLeader(), ninja2);
+
+    // New leader must be an alive ('ninja1' is closer to 'ninja2' but he's dead)
+    ninja2->hit(999); // Kill manually
+    team1.attack(&team2);
+    CHECK_EQ(team2.getLeader(), ninja3);
+
+    // If all of a team's members are dead, it can't attack or be attacked
+    ninja3->hit(999); // Kill manually
+    CHECK_THROWS(team1.attack(&team2));
+    CHECK_THROWS(team2.attack(&team1));
+
+    delete cowboy1;
+    delete ninja1;
+    delete ninja2;
+    delete ninja3;
 }
