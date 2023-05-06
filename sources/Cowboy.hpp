@@ -10,7 +10,7 @@ namespace ariel {
         public:
         Cowboy(string name, Point location) : Character(name, location, 110), ammo(6) {};
         Cowboy() : Character(), ammo(6) {};
-
+        virtual ~Cowboy() = default;
         
         // Get a pointer to an enemy, deal him minor damge; decrease self ammo by one
         void shoot(Character* enemy);

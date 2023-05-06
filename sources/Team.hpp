@@ -9,15 +9,15 @@
 namespace ariel {
     class Team {
         private:
-            Character leader;
-            vector<Character> champions;
+            Character* leader;
+            vector<Character*> champions;
 
         public:
-            Team(Character leader) : leader(leader) {
-                this->champions.push_back(leader); //
+            Team(Character* leader) : leader(leader) {
+                this->champions.push_back(leader);
             }
 
-            //destructor
+            virtual ~Team() = default;
 
             // Insert a Character to a team
             void add(Character* champion);
@@ -30,6 +30,9 @@ namespace ariel {
 
             // edit
             void print();
+
+            // mine
+            Character* getLeader();
 
     };
 

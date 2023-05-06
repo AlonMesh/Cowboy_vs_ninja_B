@@ -12,6 +12,8 @@ namespace ariel {
             // "Superior" Consturctor of all ninjas
             Ninja(string name, Point location, int healthPoints, int speed) : Character(name, location, healthPoints), speed(speed) {};
             
+            virtual ~Ninja() = default;
+
             // Moving throw a given enemy
             void move(Character* enemy);
             
@@ -26,18 +28,24 @@ namespace ariel {
         public:
             YoungNinja(string name, Point location) : Ninja(name, location, 100, 14) {};
             YoungNinja() : Ninja("", Point(), 100, 14) {};
+
+            virtual ~YoungNinja() = default;
     };
 
         class TrainedNinja : public Ninja {
         public:
             TrainedNinja(string name, Point location) : Ninja(name, location, 120, 12) {};
             TrainedNinja() : Ninja("", Point(), 120, 12) {};
+
+            virtual ~TrainedNinja() = default;
     };
 
         class OldNinja : public Ninja {
         public:
             OldNinja(string name, Point location) : Ninja(name, location, 150, 8) {};
             OldNinja() : Ninja("", Point(), 150, 8) {};
+
+            virtual ~OldNinja() = default;
     };
 }
 
