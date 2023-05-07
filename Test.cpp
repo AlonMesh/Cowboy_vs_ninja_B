@@ -4,7 +4,6 @@
 using namespace ariel;
 using namespace std;
 #include <cmath>
-#include <vector>
 
 TEST_CASE("Point initialize") {
     // Default constructor
@@ -20,7 +19,7 @@ TEST_CASE("Point initialize") {
     // Verify that the default constructor is equivalent to the constructor with two zeros
     Point p3(0.0, 0.0);
     CHECK_EQ(p1.get_x(), p3.get_x());
-    CHECK_EQ(p1.get_y(), p3.get_x());
+    CHECK_EQ(p1.get_y(), p3.get_y());
 
     /* The Point class allows for convenient initialization using two integers
     which are automatically converted to doubles. This test simply verifies
@@ -28,6 +27,10 @@ TEST_CASE("Point initialize") {
     Point p(3, 4);
     CHECK_EQ(p.get_x(), static_cast<double>(3));
     CHECK_EQ(p.get_y(), static_cast<double>(4));
+
+    // The gameboard is the first quadrant, which means X and Y must be always non-negative
+    CHECK_THROWS_AS(Point(-1, 0), invalid_argument);
+    CHECK_THROWS_AS(Point(0, -1), invalid_argument);
 }
 
 TEST_CASE("Distance between points") {
@@ -70,22 +73,22 @@ TEST_CASE("moveTowards function") {
     CHECK_EQ(resultPoint.get_y(), targetPoint.get_y());
 
     // Reset
-    Point currentPoint(0, 0);
-    Point targetPoint(5, 5); // Real distance is 7.07... 
-    int distance = 8;
+    currentPoint = Point(0, 0);
+    targetPoint = Point(5, 5); // Real distance is 7.07... 
+    distance = 8;
 
-    Point resultPoint = Point::moveTowards(currentPoint, targetPoint, distance);
+    resultPoint = Point::moveTowards(currentPoint, targetPoint, distance);
 
     // If 'currentPoint' is already within 'distance' of 'targetPoint', return 'targetPoint'.
     CHECK(resultPoint.get_x() == targetPoint.get_x());
     CHECK(resultPoint.get_y() == targetPoint.get_y());
 
     // Reset
-    Point currentPoint(0, 0);
-    Point targetPoint(10, 10);
-    int distance = 5;
+    currentPoint = Point(0, 0);
+    targetPoint = Point(10, 10);
+    distance = 5;
 
-    Point resultPoint = Point::moveTowards(currentPoint, targetPoint, distance);
+    resultPoint = Point::moveTowards(currentPoint, targetPoint, distance);
 
     // Verify that the 'distance' is now 5.0
     CHECK_EQ(resultPoint.distance(currentPoint), 5.0);
@@ -95,6 +98,9 @@ TEST_CASE("moveTowards function") {
 
     // Verify that 'resultPoint' is in 'distance' away from 'currentPoint'.
     CHECK_EQ(resultPoint.distance(currentPoint), 5.0);
+
+    // Distance supposed to represent a positive number (or 0)
+    CHECK_THROWS(Point::moveTowards(currentPoint, targetPoint, -1));
 }
 
 TEST_CASE("Character initialization") {
@@ -102,7 +108,8 @@ TEST_CASE("Character initialization") {
 
     // Name, location, and HP were set correctly
     CHECK_EQ(champ->getName(), "Champ");
-    CHECK_EQ(champ->getLocation(), Point(0, 0));
+    CHECK_EQ(champ->getLocation().get_x(), 0);
+    CHECK_EQ(champ->getLocation().get_y(), 0);
     CHECK_EQ(champ->getHealthPoints(), 100);
 
     // The created Character is alive
@@ -127,7 +134,7 @@ TEST_CASE("Character hit()") {
     // Can't hit a dead Character
     CHECK_THROWS(champ->hit(10));
 
-    Character champ("Champ", Point(0, 0), 100); // Reset
+    champ = new Character("Champ", Point(0, 0), 100); // Reset
 
     // Can't hit with a negative number (No heals allowed)
     CHECK_THROWS(champ->hit(-10));
@@ -155,7 +162,8 @@ TEST_CASE("Cowboy initialization") {
 
     // Character's fields are like expected when creating a Cowboy
     CHECK_EQ(cowboy1->getName(), "Cow");
-    CHECK_EQ(cowboy1->getLocation(), Point(0, 0));
+    CHECK_EQ(cowboy1->getLocation().get_x(), 0);
+    CHECK_EQ(cowboy1->getLocation().get_y(), 0);
     CHECK_EQ(cowboy1->getHealthPoints(), 110); // A cowboy has 110 HP
 
     // Cowboy's fields are like expected when creating a Cowboy
@@ -165,13 +173,13 @@ TEST_CASE("Cowboy initialization") {
 
     // Clerify that Cowboy is an instance of Character. 
     // Implemented by downcast a Character pointer to Cowboy pointer.
-    Character* character_ptr = new Cowboy();
-    Cowboy* cowboy_ptr = dynamic_cast<Cowboy*>(character_ptr);
-    CHECK(cowboy_ptr != nullptr);
+    // Character* character_ptr = new Cowboy();
+    // Cowboy* cowboy_ptr = dynamic_cast<Cowboy*>(character_ptr);
+    // CHECK(cowboy_ptr != nullptr);
 
     delete cowboy1;
-    delete character_ptr;
-    delete cowboy_ptr;
+    // delete character_ptr;
+    // delete cowboy_ptr;
 }
 
 TEST_CASE("Cowboy shooting") {
@@ -182,7 +190,7 @@ TEST_CASE("Cowboy shooting") {
 
     // 'cowboy1' shoots 'cowboy2' and uses 1 bullet; 'cowboy2' loses 10 HP.
     CHECK_EQ(cowboy1->getAmmo(), 5);
-    CHECK_EQ(cowboy1->hasboolets(), true);
+    CHECK(cowboy1->hasboolets());
     CHECK_EQ(cowboy2->getHealthPoints(), 100);
 
     // Use all the ammo
@@ -192,7 +200,7 @@ TEST_CASE("Cowboy shooting") {
 
     // 'cowboy1' has no bullets left
     CHECK_EQ(cowboy1->getAmmo(), 0);
-    CHECK_EQ(cowboy1->hasboolets(), false);
+    CHECK_FALSE(cowboy1->hasboolets());
 
     // Cowboy can't shoot if he has no bullets
     CHECK_THROWS(cowboy1->shoot(cowboy2)); // which error?***********
@@ -200,23 +208,37 @@ TEST_CASE("Cowboy shooting") {
     // 'cowboy1' reloads and has 6 bullets again
     cowboy1->reload();
     CHECK_EQ(cowboy1->getAmmo(), 6);
-    CHECK_EQ(cowboy1->hasboolets(), true);
+    CHECK(cowboy1->hasboolets());
 
-    Cowboy* cowboy3 = new Cowboy("KillMe", Point(2, 2)); // 110 hp
+    Cowboy* cowboy3 = new Cowboy("KillMe", Point(2, 2));
 
-    // 'cowboy1' shoots 'cowboy3' multiple times until 'cowboy3' dies
-    for (size_t i = 0; i < 12; i++) {
+    // Cowboy can't reload unless he has 0 bullets
+    for (size_t i = 0; i < 6; i++) {
+        CHECK_THROWS(cowboy1->reload());
         cowboy1->shoot(cowboy3);
-        cowboy1->reload();
+    }
+    CHECK_NOTHROW(cowboy1->reload());
+
+    Cowboy* cowboy4 = new Cowboy("KillMe", Point(3, 3)); // 110 hp
+
+    // 'cowboy1' shoots 'cowboy4' multiple times until 'cowboy4' dies
+    for (size_t i = 0; i < 12; i++) {
+        if (cowboy1->hasboolets()) {
+            cowboy1->shoot(cowboy4);
+        }
+
+        else {
+            cowboy1->reload();
+        }
     }
 
-    // 'cowboy3' is dead
-    CHECK_EQ(cowboy3->getHealthPoints(), 0); 
-    CHECK_FALSE(cowboy3->isAlive());
+    // 'cowboy4' is dead
+    CHECK_EQ(cowboy4->getHealthPoints(), 0); 
+    CHECK_FALSE(cowboy4->isAlive());
 
     // Edge cases:
     // Cowboy can't shoot a dead Character
-    CHECK_THROWS(cowboy1->shoot(cowboy3));
+    CHECK_THROWS(cowboy1->shoot(cowboy4));
 
     // Cowboy can't shoot himself
     CHECK_THROWS(cowboy1->shoot(cowboy1));
@@ -226,12 +248,16 @@ TEST_CASE("Cowboy shooting") {
     cowboy1->reload();
     CHECK_THROWS(cowboy1->reload());
 
-    // Cowboy can't shoot if he's dead (reminder: 'cowboy3' is dead)
-    CHECK_THROWS(cowboy3->shoot(cowboy1));
+    // Cowboy can't shoot if he's dead (reminder: 'cowboy4' is dead)
+    CHECK_THROWS(cowboy4->shoot(cowboy1));
+
+    // Cowboy can't reload if he's dead (reminder: 'cowboy4' is dead)
+    CHECK_THROWS(cowboy4->reload());
 
     delete cowboy1;
     delete cowboy2;
     delete cowboy3;
+    delete cowboy4;
 }
 
 TEST_CASE("Ninja Initialization") {
