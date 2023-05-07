@@ -39,6 +39,10 @@ namespace ariel {
     class Team2 : public Team {
         void add(Character* champion);
     };
+
+    class SmartTeam : public Team {
+        void smartOrder();
+    };
 }
 
 #endif

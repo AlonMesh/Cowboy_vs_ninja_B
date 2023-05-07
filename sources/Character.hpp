@@ -1,9 +1,9 @@
 #ifndef CHAR_HPP
 #define CHAR_HPP
-using namespace std;
 #include <string>
 #include "Point.hpp"
-
+#define DEFAULT_HP 100
+using namespace std;
 namespace ariel {
     class Character {
         private:
@@ -12,9 +12,45 @@ namespace ariel {
             int healthPoints;
         
         public:
-            Character(string name, Point location, int healthPoints) : name(name), location(location), healthPoints(healthPoints) {} ;
-            Character() : name(""), healthPoints(100), location(Point(0,0)) {} ;
+            Character(const string& name, Point location, int healthPoints) : name(name), location(location), healthPoints(healthPoints) {} ;
+            Character() : name(""), healthPoints(DEFAULT_HP), location(Point(0,0)) {} ;
             virtual ~Character() = default;
+
+            // Copy Constructor
+            Character(const Character& other) {
+                name = other.name;
+                location = other.location;
+                healthPoints = other.healthPoints;
+            }
+
+            // Copy Assignment Operator
+            Character& operator=(const Character& other) {
+                if (this == &other) {
+                    return *this;
+                }
+                name = other.name;
+                location = other.location;
+                healthPoints = other.healthPoints;
+                return *this;
+            }
+
+            // Move Constructor
+            Character(Character&& other) noexcept {
+                name = move(other.name);
+                location = move(other.location);
+                healthPoints = move(other.healthPoints);
+            }
+
+            // Move Assignment Operator
+            Character& operator=(Character&& other) noexcept {
+                if (this == &other) {
+                    return *this;
+                }
+                name = move(other.name);
+                location = move(other.location);
+                healthPoints = move(other.healthPoints);
+                return *this;
+            }
 
             // Returns true if the Character is still alive (more than 0 hp)
             bool isAlive();

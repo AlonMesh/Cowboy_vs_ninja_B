@@ -1,6 +1,8 @@
 #ifndef COWBOY_HPP
 #define COWBOY_HPP
 #include "Character.hpp"
+#define COWBOY_HP 110
+#define COWBOY_AMMO 6
 
 namespace ariel {
     class Cowboy : public Character {
@@ -8,8 +10,8 @@ namespace ariel {
             int ammo;
 
         public:
-        Cowboy(string name, Point location) : Character(name, location, 110), ammo(6) {};
-        Cowboy() : Character(), ammo(6) {};
+        Cowboy(const string& name, Point location) : Character(name, location, COWBOY_HP), ammo(COWBOY_AMMO) {};
+        Cowboy() : Character(), ammo(COWBOY_AMMO) {}; // NO 110 sent! ***
         virtual ~Cowboy() = default;
         
         // Get a pointer to an enemy, deal him minor damge; decrease self ammo by one
