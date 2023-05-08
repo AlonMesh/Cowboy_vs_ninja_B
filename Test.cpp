@@ -3,7 +3,7 @@
 #include "sources/Team.hpp"
 using namespace ariel;
 using namespace std;
-#include <cmath>
+#include <cmath> // for sqrt()
 
 TEST_CASE("Point initialize") {
     // Default constructor
@@ -99,12 +99,12 @@ TEST_CASE("moveTowards function") {
     // Verify that 'resultPoint' is in 'distance' away from 'currentPoint'.
     CHECK_EQ(resultPoint.distance(currentPoint), 5.0);
 
-    // Distance supposed to represent a positive number (or 0)
-    CHECK_THROWS(Point::moveTowards(currentPoint, targetPoint, -1));
+    // Distance supposed to represent a non-negative number
+    CHECK_THROWS_AS(Point::moveTowards(currentPoint, targetPoint, -1), invalid_argument);
 }
 
 TEST_CASE("Character initialization") {
-    Character* champ = new Character("Champ", Point(0, 0), 100);
+    Character* champ = new Character("Champ", Point(), 100);
 
     // Name, location, and HP were set correctly
     CHECK_EQ(champ->getName(), "Champ");
@@ -171,15 +171,10 @@ TEST_CASE("Cowboy initialization") {
     CHECK(cowboy1->isAlive());
     CHECK(cowboy1->hasboolets());
 
-    // Clerify that Cowboy is an instance of Character. 
-    // Implemented by downcast a Character pointer to Cowboy pointer.
-    // Character* character_ptr = new Cowboy();
-    // Cowboy* cowboy_ptr = dynamic_cast<Cowboy*>(character_ptr);
-    // CHECK(cowboy_ptr != nullptr);
+    // Check if Cowboy is also a Character
+    CHECK(dynamic_cast<Character*>(cowboy1) != nullptr);
 
     delete cowboy1;
-    // delete character_ptr;
-    // delete cowboy_ptr;
 }
 
 TEST_CASE("Cowboy shooting") {
@@ -203,7 +198,7 @@ TEST_CASE("Cowboy shooting") {
     CHECK_FALSE(cowboy1->hasboolets());
 
     // Cowboy can't shoot if he has no bullets
-    CHECK_THROWS(cowboy1->shoot(cowboy2)); // which error?***********
+    CHECK_THROWS(cowboy1->shoot(cowboy2));
 
     // 'cowboy1' reloads and has 6 bullets again
     cowboy1->reload();
@@ -274,26 +269,14 @@ TEST_CASE("Ninja Initialization") {
     CHECK_EQ(ninja3->getHealthPoints(), 150);
     CHECK_EQ(ninja3->getSpeed(), 8);
 
+    // Check if any type of Ninja is also a Character
+    CHECK(dynamic_cast<Character*>(ninja1) != nullptr);
+    CHECK(dynamic_cast<Character*>(ninja2) != nullptr);
+    CHECK(dynamic_cast<Character*>(ninja3) != nullptr);
+
     delete ninja1;
     delete ninja2;
     delete ninja3;
-
-    // All types of ninjas are instance of Ninja class
-    Ninja* ninja_ptr1 = new YoungNinja();
-    YoungNinja* young_ptr = dynamic_cast<YoungNinja*>(ninja_ptr1);
-    CHECK(young_ptr != nullptr);
-
-    Ninja* ninja_ptr2 = new TrainedNinja();
-    TrainedNinja* trained_ptr = dynamic_cast<TrainedNinja*>(ninja_ptr2);
-    CHECK(trained_ptr != nullptr);
-
-    Ninja* ninja_ptr3 = new OldNinja();
-    OldNinja* old_ptr = dynamic_cast<OldNinja*>(ninja_ptr3);
-    CHECK(old_ptr != nullptr);
-
-    delete ninja_ptr1;
-    delete ninja_ptr2;
-    delete ninja_ptr3;
 }
 
 TEST_CASE("Ninja move and slash functions") {
@@ -323,8 +306,13 @@ TEST_CASE("Ninja move and slash functions") {
 
     ninja2->move(enemy2); // Current distace: 1
 
-    // Ninja can't slash an enemy if he's exactly 1 distance away
+    // Ninja can't slash an enemy if he's exactly 1 distance away (readme rules)
     CHECK_THROWS(ninja2->slash(enemy2));
+
+    // When ninja's distance to victim is shorter than his speed, he will get to the victim
+    ninja2->move(enemy2);
+    CHECK_EQ(ninja2->getLocation().get_x(), enemy2->getLocation().get_x());
+    CHECK_EQ(ninja2->getLocation().get_y(), enemy2->getLocation().get_y());
 
     // Ninja can't slash himself
     CHECK_THROWS(ninja2->slash(ninja2));
@@ -376,6 +364,11 @@ TEST_CASE("Team add() and stillAlive() functions") {
     CHECK_THROWS(team2.add(cowboy1)); // Leader
     CHECK_THROWS(team2.add(cowboy2)); // Member
 
+    // Tean can't add a dead Character
+    Cowboy* cowboy4 = new Cowboy("ToBeKilled", Point());
+    cowboy4->hit(999);
+    CHECK_THROWS(team2.add(cowboy4));
+
     // Team can't be created if the first Leader is in another team
     CHECK_THROWS(Team(cowboy1)); // Leader
     CHECK_THROWS(Team(cowboy2)); // Member
@@ -391,6 +384,7 @@ TEST_CASE("Team add() and stillAlive() functions") {
     delete cowboy1;
     delete cowboy2;
     delete cowboy3;
+    delete cowboy4;
 }
 
 TEST_CASE("Team attack() function") {
