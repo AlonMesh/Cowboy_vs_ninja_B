@@ -70,8 +70,8 @@ namespace ariel {
             // mine
             int getHealthPoints();
 
-            //edit
-            void print();
+            // edit
+            virtual void print();
     };
 }
 #endif

@@ -20,7 +20,7 @@ namespace ariel {
             virtual ~Team() = default;
 
             // Insert a Character to a team
-            void add(Character* champion);
+            virtual void add(Character* champion);
 
             // edit
             void attack(Team* enemy_team);
@@ -37,7 +37,7 @@ namespace ariel {
     };
 
     class Team2 : public Team {
-        void add(Character* champion);
+        void add(Character* champion) override;
     };
 
     class SmartTeam : public Team {
