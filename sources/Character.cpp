@@ -1,35 +1,85 @@
 #include "Character.hpp"
-
 namespace ariel {
-bool Character::isAlive() {
-// TODO: Implement function
-return true;
-}
-double Character::distance(Character* other) {
-    // TODO: Implement function
-    return 1.0;
-}
 
-void Character::hit(int damage) {
-    // TODO: Implement function
-}
+    Character::Character(const string& name, Point location, int healthPoints)
+    : name(name), location(location), healthPoints(healthPoints) {
+        this->teamMember = false;
+    };
+    Character::Character() : name(""), healthPoints(DEFAULT_HP), location(Point(0,0)) {
+        this->teamMember = false;
+    };
 
-string Character::getName() {
-    // TODO: Implement function
-    return "a";
-}
+    bool Character::isAlive() {
+        return (this->getHealthPoints() > 0);
+    }
 
-Point Character::getLocation() {
-    // TODO: Implement function
-    return Point();
-}
+    double Character::distance(Character* other) {
+        return this->getLocation().distance(other->getLocation());
+    }
 
-int Character::getHealthPoints() {
-    // TODO: Implement function
-    return 0;
-}
+    void Character::hit(int damage) {
+        // Leagal damage is 10 or 13, but cuz test issues it is positive
+        if (damage <= 0) {
+            throw std::runtime_error("Damage taken must be positive");
+        }
 
-void Character::print() {
-    // TODO: Implement function
-}
+        if (!this->isAlive()) {
+            throw std::runtime_error("can't hit a dead character");
+        }
+    
+        this->healthPoints -= damage;
+        
+        if (this->healthPoints < 0) {
+            this->healthPoints = 0;
+        }
+    }
+
+    string Character::getName() {
+        return this->name;
+    }
+
+    Point Character::getLocation() {
+        return this->location;
+    }
+
+    int Character::getHealthPoints() {
+        return this->healthPoints;
+    }
+
+    void Character::setLocation(Point point) {
+        this->location = point;
+    }
+
+    void Character::joinedTeam() {
+        this->teamMember = true;
+    }
+
+    bool Character::isInTeam() {
+        return this->teamMember;
+    }
+
+    Character* Character::findClosestCharacter(vector<Character*> characters) {
+        int minDistance = 99999; // change it to max_int
+        Character* closest;
+
+        for (auto character : characters) {
+            if (character->isAlive()) {
+                if (this->distance(character) < minDistance) {
+                    minDistance = this->distance(character);
+                    closest = character;
+                }
+            }
+        }
+
+        return closest;
+    }
+
+    void Character::print() {
+        cout << "\t" << this->getName() << " (Character):" << endl;
+        cout << "\t\tStatus: " << (this->isAlive() ? "Alive" : "Dead") << " (" << this->getHealthPoints() << " / " << DEFAULT_HP << ")" << endl;
+        cout << "\t\tLocation: ";
+        this->getLocation().print();
+        cout << endl;
+    }
+
 }

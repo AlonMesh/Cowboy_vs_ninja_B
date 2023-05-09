@@ -6,41 +6,51 @@
 #include "Ninja.hpp"
 #include <vector>
 
-namespace ariel {
-    class Team {
-        private:
-            Character* leader;
-            vector<Character*> champions;
+namespace ariel
+{
+    class Team
+    {
+    protected:
+        Character *leader;
+        vector<Character *> champions;
 
-        public:
-            Team(Character* leader) : leader(leader) {
-                this->champions.push_back(leader);
-            }
+    private:
+        int numCowboys;
 
-            virtual ~Team() = default;
+    public:
+        Team(Character *leader);
 
-            // Insert a Character to a team
-            virtual void add(Character* champion);
+        virtual ~Team() = default;
 
-            // edit
-            void attack(Team* enemy_team);
+        // Insert a Character to a team
+        virtual void add(Character *character);
 
-            // Returns the amout of alive champions in team
-            int stillAlive();
+        // mine
+        void add_validation(Character *character);
 
-            // edit
-            void print();
+        // edit
+        void attack(Team *enemy_team);
 
-            // mine
-            Character* getLeader();
+        // Returns the amout of alive champions in team
+        int stillAlive();
 
+        // edit
+        void print();
+
+        // mine
+        Character *getLeader();
+
+        // mine
+        vector<Character*> getMembers();
     };
 
-    class Team2 : public Team {
-        void add(Character* champion) override;
+    class Team2 : public Team
+    {
+        void add(Character *character) override;
     };
 
-    class SmartTeam : public Team {
+    class SmartTeam : public Team
+    {
         void smartOrder();
     };
 }

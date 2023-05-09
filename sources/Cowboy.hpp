@@ -3,6 +3,9 @@
 #include "Character.hpp"
 #define COWBOY_HP 110
 #define COWBOY_AMMO 6
+#define COWBOY_DMG 10
+
+//TODO: Print()
 
 namespace ariel {
     class Cowboy : public Character {
@@ -10,20 +13,52 @@ namespace ariel {
             int ammo;
 
         public:
-        Cowboy(const string& name, Point location) : Character(name, location, COWBOY_HP), ammo(COWBOY_AMMO) {};
-        Cowboy() : Character(), ammo(COWBOY_AMMO) {}; // NO 110 sent! ***
+        /**
+         * Cowboy constructor with a name and location. Healthpoint and ammo are already defined for cowboy.
+         * 
+         * @param name The name of the cowboy.
+         * @param location The location of the cowboy.
+        */
+        Cowboy(const string& name, Point location);
+        
+        /**
+         * Cowboy default constructor.
+         * Initializes the name to an empty string, the health points to the default value,
+         * the location to the origin (0,0) and the ammo to default value.
+         */
+        Cowboy();
+
         virtual ~Cowboy() = default;
         
-        // Get a pointer to an enemy, deal him minor damge; decrease self ammo by one
+        /**
+         * Shoots the enemy character with a cowboy's gun. Decrase 1 ammo.
+         * 
+         * @param enemy The character to be shot.
+         * @throws std::runtime_error if the cowboy has no ammo, is dead, 
+         *         the enemy is dead or is the cowboy himself.
+         */
         void shoot(Character* enemy);
 
-        // Returns true if a Cowboy has bulltes
+        /**
+         * Checks if the cowboy has any bullets left.
+         * 
+         * @return True if the cowboy has at least one bullet, False otherwise.
+         */
         bool hasboolets();
 
-        // Load 6 bullets
+        /**
+         * Reloads the cowboy's gun.
+         * 
+         * @throws std::runtime_error if the cowboy already has bullets in his gun.
+         */
         void reload();
 
         //mine
+        /**
+         * Returns the amount of ammo left in the cowboy's gun.
+         * 
+         * @return The amount of ammo left in the cowboy's gun.
+         */
         int getAmmo();
     };
 }

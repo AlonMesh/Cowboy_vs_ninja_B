@@ -120,7 +120,7 @@ TEST_CASE("Character initialization") {
 
 TEST_CASE("Character hit()") {
     Character* champ = new Character("Champ", Point(0, 0), 100);
-    
+
     // Hitting a 'champ' by 20 HP will leave him with 80 and still alive
     champ->hit(20);
     CHECK_EQ(champ->getHealthPoints(), 80);
@@ -128,7 +128,7 @@ TEST_CASE("Character hit()") {
 
     // Hitting a 'champ' by 80 HP will leave him with 0 and kill him
     champ->hit(80);
-    CHECK_EQ(champ->getHealthPoints(), 80);
+    CHECK_EQ(champ->getHealthPoints(), 0);
     CHECK_FALSE(champ->isAlive());
 
     // Can't hit a dead Character
@@ -238,7 +238,7 @@ TEST_CASE("Cowboy shooting") {
     // Cowboy can't shoot himself
     CHECK_THROWS(cowboy1->shoot(cowboy1));
 
-    // Cowboy can't reload() when he already has full ammo
+    // Cowboy can't reload() when he already has ammo
     cowboy1->shoot(cowboy2);
     cowboy1->reload();
     CHECK_THROWS(cowboy1->reload());
@@ -387,6 +387,14 @@ TEST_CASE("Team add() and stillAlive() functions") {
     delete cowboy4;
 }
 
+TEST_CASE("Team iterating") {
+    
+}
+
+TEST_CASE("Team2 iterating") {
+
+}
+
 TEST_CASE("Team attack() function") {
     // To make things easier, team1 contains only cowboys and team2 contains only ninjas
     // Ofc any team can contains both
@@ -425,13 +433,17 @@ TEST_CASE("Team attack() function") {
     CHECK_EQ(team2.getLeader(), ninja1); // Altough he's dead. Readme rules.
 
     // New leader will be set only if the current leader is dead at the start of the round
+    team2.attack(&team1);
+    CHECK_EQ(team2.getLeader()->getName(), ninja2->getName());
+
     team1.attack(&team2);
-    CHECK_EQ(team2.getLeader(), ninja2);
 
     // New leader must be an alive ('ninja1' is closer to 'ninja2' but he's dead)
     ninja2->hit(999); // Kill manually
+    team2.attack(&team1);
+    CHECK_EQ(team2.getLeader()->getName(), ninja3->getName());
+
     team1.attack(&team2);
-    CHECK_EQ(team2.getLeader(), ninja3);
 
     // If all of a team's members are dead, it can't attack or be attacked
     ninja3->hit(999); // Kill manually
