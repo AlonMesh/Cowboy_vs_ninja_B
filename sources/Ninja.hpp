@@ -15,10 +15,10 @@ namespace ariel {
         private:
             int speed;
         
-        public:
+        protected:
             // "Superior" Consturctor of all ninjas
             Ninja(string name, Point location, int healthPoints, int speed);
-            
+        public:
             virtual ~Ninja() = default;
 
             // Moving throw a given enemy
@@ -32,6 +32,8 @@ namespace ariel {
 
             // mine
             void actionControl(Character* enemy);
+
+            virtual void print() const = 0; // pure virtual function
     };
 
     class YoungNinja : public Ninja {
@@ -40,6 +42,14 @@ namespace ariel {
             YoungNinja() : Ninja("", Point(), YOUNG_NINJA_HP, YOUNG_NINJA_SPEED) {};
 
             virtual ~YoungNinja() = default;
+
+        void print() const override {
+            cout << "\t" << this->name << " (YoungNinja):" << endl;
+            cout << "\t\tStatus: " << (this->isAlive() ? "Alive" : "Dead") << " (" << getHealthPoints() << " / " << YOUNG_NINJA_HP << ")" << endl;
+            cout << "\t\tLocation: ";
+            getLocation().print();
+            cout << endl;
+        }
     };
 
         class TrainedNinja : public Ninja {
@@ -48,6 +58,14 @@ namespace ariel {
             TrainedNinja() : Ninja("", Point(), TRAINED_NINJA_HP, TRAINED_NINJA_SPEED) {};
 
             virtual ~TrainedNinja() = default;
+
+        void print() const override {
+            cout << "\t" << this->name << " (TrainedNinja):" << endl;
+            cout << "\t\tStatus: " << (this->isAlive() ? "Alive" : "Dead") << " (" << getHealthPoints() << " / " << TRAINED_NINJA_HP << ")" << endl;
+            cout << "\t\tLocation: ";
+            getLocation().print();
+            cout << endl;
+        }
     };
 
         class OldNinja : public Ninja {
@@ -56,6 +74,14 @@ namespace ariel {
             OldNinja() : Ninja("", Point(), OLD_NINJA_HP, OLD_NINJA_SPEED) {};
 
             virtual ~OldNinja() = default;
+
+        void print() const override {
+            cout << "\t" << this->name << " (OldNinja):" << endl;
+            cout << "\t\tStatus: " << (this->isAlive() ? "Alive" : "Dead") << " (" << getHealthPoints() << " / " << OLD_NINJA_HP << ")" << endl;
+            cout << "\t\tLocation: ";
+            getLocation().print();
+            cout << endl;
+        }
     };
 }
 

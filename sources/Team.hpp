@@ -26,7 +26,7 @@ namespace ariel
         virtual void add(Character *character);
 
         // mine
-        void add_validation(Character *character);
+        static void add_validation(Character *character, vector<Character*> members);
 
         // edit
         void attack(Team *enemy_team);
@@ -46,11 +46,15 @@ namespace ariel
 
     class Team2 : public Team
     {
+    public:
+        Team2(Character *leader) : Team(leader) {};
         void add(Character *character) override;
     };
 
     class SmartTeam : public Team
     {
+    public:
+        SmartTeam(Character *leader) : Team(leader) {};
         void smartOrder();
     };
 }

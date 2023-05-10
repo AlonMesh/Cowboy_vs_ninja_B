@@ -58,7 +58,7 @@ TEST_CASE("Distance between points") {
     // Additional test with arbitrary double values
     Point d(2, 8);
     Point e(9, 4);
-    CHECK_EQ(d.distance(e), 8.94427191);
+    CHECK_EQ(d.distance(e), doctest::Approx(8.062258)); // Approx avoid floating-point error
 }
 
 TEST_CASE("moveTowards function") {
@@ -104,51 +104,59 @@ TEST_CASE("moveTowards function") {
 }
 
 TEST_CASE("Character initialization") {
-    Character* champ = new Character("Champ", Point(), 100);
+    /**
+     * Cowboy represents any Character.
+     * The function in this test belongs to Character.
+     * Unique functions of Cowboy will be tested later.
+     */ 
+    Cowboy* c1 = new Cowboy("Champ", Point());
 
     // Name, location, and HP were set correctly
-    CHECK_EQ(champ->getName(), "Champ");
-    CHECK_EQ(champ->getLocation().get_x(), 0);
-    CHECK_EQ(champ->getLocation().get_y(), 0);
-    CHECK_EQ(champ->getHealthPoints(), 100);
+    CHECK_EQ(c1->getName(), "Champ");
+    CHECK_EQ(c1->getLocation().get_x(), 0);
+    CHECK_EQ(c1->getLocation().get_y(), 0);
+    CHECK_EQ(c1->getHealthPoints(), 110);
 
     // The created Character is alive
-    CHECK(champ->isAlive());
+    CHECK(c1->isAlive());
 
-    delete champ;
+    delete c1;
 }
 
 TEST_CASE("Character hit()") {
-    Character* champ = new Character("Champ", Point(0, 0), 100);
+    // Cowboy represents any Character*
+    Cowboy* c1 = new Cowboy("Champ", Point());
 
-    // Hitting a 'champ' by 20 HP will leave him with 80 and still alive
-    champ->hit(20);
-    CHECK_EQ(champ->getHealthPoints(), 80);
-    CHECK(champ->isAlive());
+    // Hitting a 'champ' by 20 HP will leave him with 90 and still alive
+    c1->hit(20);
+    CHECK_EQ(c1->getHealthPoints(), 90);
+    CHECK(c1->isAlive());
 
-    // Hitting a 'champ' by 80 HP will leave him with 0 and kill him
-    champ->hit(80);
-    CHECK_EQ(champ->getHealthPoints(), 0);
-    CHECK_FALSE(champ->isAlive());
+    // Hitting a 'champ' by 90 HP will leave him with 0 and kill him
+    c1->hit(90);
+    CHECK_EQ(c1->getHealthPoints(), 0);
+    CHECK_FALSE(c1->isAlive());
 
     // Can't hit a dead Character
-    CHECK_THROWS(champ->hit(10));
+    CHECK_THROWS(c1->hit(10));
 
-    champ = new Character("Champ", Point(0, 0), 100); // Reset
+    Cowboy* c2 = new Cowboy("Coco", Point());
 
     // Can't hit with a negative number (No heals allowed)
-    CHECK_THROWS(champ->hit(-10));
+    CHECK_THROWS(c2->hit(-10));
 
     // Hitting a Character with more HP than he has left will kill him
-    CHECK_NOTHROW(champ->hit(110));
-    CHECK_FALSE(champ->isAlive());
+    CHECK_NOTHROW(c2->hit(110));
+    CHECK_FALSE(c2->isAlive());
 
-    delete champ;
+    delete c1;
+    delete c2;
 }
 
 TEST_CASE("distance of Character") {
-    Character* c1 = new Character("Champ", Point(0, 0), 100);
-    Character* c2 = new Character("Coco", Point(1, 0), 100);
+    // Cowboy represents any Character*
+    Cowboy* c1 = new Cowboy("Champ", Point(0, 0));
+    Cowboy* c2 = new Cowboy("Coco", Point(1, 0));
 
     // Character's distance is like Point's distance. That's enough cuz it's based on other tests
     CHECK_EQ(c1->distance(c2), c1->getLocation().distance(c2->getLocation()));
@@ -388,11 +396,96 @@ TEST_CASE("Team add() and stillAlive() functions") {
 }
 
 TEST_CASE("Team iterating") {
-    
+    Cowboy* cowboy1 = new Cowboy("Champ", Point(1, 1));
+    Cowboy* cowboy2 = new Cowboy("Coco", Point(1, 1));
+    Cowboy* cowboy3 = new Cowboy("Candy", Point(1, 1));
+    YoungNinja* ninja1 = new YoungNinja("Yu", Point(30, 30));
+    YoungNinja* ninja2 = new YoungNinja("Gi", Point(31, 31));
+    YoungNinja* ninja3 = new YoungNinja("Oh", Point(33, 33));
+
+    // Cowboys will be orders by the time they joined, as well as ninjas
+    // But all the cowboys will be before any ninja
+
+    Team team(cowboy1);
+    team.add(ninja1);
+    team.add(ninja2);
+    team.add(cowboy2);
+    team.add(cowboy3);
+    team.add(ninja3);
+
+    // Expected order: c1, c2, c3, n1, n2, n3
+    CHECK_EQ(team.getMembers().at(0), cowboy1);
+    CHECK_EQ(team.getMembers().at(1), cowboy2);
+    CHECK_EQ(team.getMembers().at(2), cowboy3);
+    CHECK_EQ(team.getMembers().at(3), ninja1);
+    CHECK_EQ(team.getMembers().at(4), ninja2);
+    CHECK_EQ(team.getMembers().at(5), ninja3);
+
+    // Iteration works well if the leader is ninja
+    YoungNinja* ninja4 = new YoungNinja("Gx", Point(33, 33));
+    Cowboy* cowboy4 = new Cowboy("Cow", Point(1, 1));
+
+    Team team_b(ninja4);
+    team_b.add(cowboy4);
+
+    // Expected order: c4, n4
+    CHECK_EQ(team_b.getMembers().at(0), cowboy4);
+    CHECK_EQ(team_b.getMembers().at(1), ninja4);
+
+    delete cowboy1;
+    delete cowboy2;
+    delete cowboy3;
+    delete cowboy4;
+    delete ninja1;
+    delete ninja2;
+    delete ninja3;
+    delete ninja4;
 }
 
 TEST_CASE("Team2 iterating") {
+    Cowboy* cowboy1 = new Cowboy("Champ", Point(1, 1));
+    Cowboy* cowboy2 = new Cowboy("Coco", Point(1, 1));
+    Cowboy* cowboy3 = new Cowboy("Candy", Point(1, 1));
+    YoungNinja* ninja1 = new YoungNinja("Yu", Point(30, 30));
+    YoungNinja* ninja2 = new YoungNinja("Gi", Point(31, 31));
+    YoungNinja* ninja3 = new YoungNinja("Oh", Point(33, 33));
 
+    // Cowboys will be orders by the time they joined, as well as ninjas
+    // But all the cowboys will be before any ninja
+
+    Team2 team(cowboy1);
+    team.add(ninja1);
+    team.add(ninja2);
+    team.add(cowboy2);
+    team.add(cowboy3);
+    team.add(ninja3);
+
+    // Expected order: c1, c2, c3, n1, n2, n3
+    CHECK_EQ(team.getMembers().at(0), cowboy1);
+    CHECK_EQ(team.getMembers().at(1), ninja1);
+    CHECK_EQ(team.getMembers().at(2), ninja2);
+    CHECK_EQ(team.getMembers().at(3), cowboy2);
+    CHECK_EQ(team.getMembers().at(4), cowboy3);
+    CHECK_EQ(team.getMembers().at(5), ninja3);
+
+    // Iteration works well if the leader is ninja
+    YoungNinja* ninja4 = new YoungNinja("Gx", Point(33, 33));
+    Cowboy* cowboy4 = new Cowboy("Cow", Point(1, 1));
+
+    Team2 team_b(ninja4);
+    team_b.add(cowboy4);
+
+    CHECK_EQ(team_b.getMembers().at(0), ninja4);
+    CHECK_EQ(team_b.getMembers().at(1), cowboy4);
+
+    delete cowboy1;
+    delete cowboy2;
+    delete cowboy3;
+    delete cowboy4;
+    delete ninja1;
+    delete ninja2;
+    delete ninja3;
+    delete ninja4;
 }
 
 TEST_CASE("Team attack() function") {
@@ -434,14 +527,14 @@ TEST_CASE("Team attack() function") {
 
     // New leader will be set only if the current leader is dead at the start of the round
     team2.attack(&team1);
-    CHECK_EQ(team2.getLeader()->getName(), ninja2->getName());
+    CHECK_EQ(team2.getLeader(), ninja2);
 
     team1.attack(&team2);
 
     // New leader must be an alive ('ninja1' is closer to 'ninja2' but he's dead)
     ninja2->hit(999); // Kill manually
     team2.attack(&team1);
-    CHECK_EQ(team2.getLeader()->getName(), ninja3->getName());
+    CHECK_EQ(team2.getLeader(), ninja3);
 
     team1.attack(&team2);
 

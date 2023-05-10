@@ -9,7 +9,7 @@ namespace ariel {
         this->teamMember = false;
     };
 
-    bool Character::isAlive() {
+    bool Character::isAlive() const {
         return (this->getHealthPoints() > 0);
     }
 
@@ -38,11 +38,11 @@ namespace ariel {
         return this->name;
     }
 
-    Point Character::getLocation() {
+    Point Character::getLocation() const {
         return this->location;
     }
 
-    int Character::getHealthPoints() {
+    int Character::getHealthPoints() const {
         return this->healthPoints;
     }
 
@@ -72,14 +72,6 @@ namespace ariel {
         }
 
         return closest;
-    }
-
-    void Character::print() {
-        cout << "\t" << this->getName() << " (Character):" << endl;
-        cout << "\t\tStatus: " << (this->isAlive() ? "Alive" : "Dead") << " (" << this->getHealthPoints() << " / " << DEFAULT_HP << ")" << endl;
-        cout << "\t\tLocation: ";
-        this->getLocation().print();
-        cout << endl;
     }
 
 }

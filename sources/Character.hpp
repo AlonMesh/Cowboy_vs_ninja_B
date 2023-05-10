@@ -10,7 +10,7 @@ namespace ariel
 {
     class Character
     {
-    private:
+    protected:
         string name;
         Point location;
         int healthPoints;
@@ -80,7 +80,7 @@ namespace ariel
          * Check if the Character is alive
          * @return true if the Character's health points are greater than 0, false otherwise
          */
-        bool isAlive();
+        bool isAlive() const;
 
         /**
          * Calculates the distance between the current character and another character.
@@ -100,10 +100,10 @@ namespace ariel
         string getName();
 
         // Returns the position of the Character
-        Point getLocation();
+        Point getLocation() const;
 
         // mine*****
-        int getHealthPoints();
+        int getHealthPoints() const;
 
         // mine*******
         void setLocation(Point point);
@@ -120,7 +120,7 @@ namespace ariel
          * Print information about the Character to the console, including name, status (alive/dead), health points,
          * and location.
          */
-        virtual void print();
+        virtual void print() const = 0; // pure virtual function
     };
 }
 #endif

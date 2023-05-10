@@ -2,15 +2,15 @@
 
 namespace ariel
 {
-
     Team::Team(Character *leader) : leader(leader)
     {
+        this->numCowboys = 0;
         this->add(leader);
     }
 
     void Team::add(Character *champion)
     {
-        add_validation(champion);
+        add_validation(champion, this->getMembers());
 
         if (dynamic_cast<Ninja *>(champion) != nullptr)
         {
@@ -27,18 +27,18 @@ namespace ariel
         }
         else
         {
-            // throw
+            throw runtime_error("A character must be cowboy or ninja");
         }
     }
 
-    void Team::add_validation(Character *character)
+    void Team::add_validation(Character *character, vector<Character*> members)
     {
         if (character->isInTeam())
         {
             throw runtime_error("Character can be only in one team");
         }
 
-        if (this->champions.size() >= 10)
+        if (members.size() >= 10)
         {
             throw runtime_error("Team can has only 10 members");
         }
@@ -123,7 +123,8 @@ namespace ariel
 
     void Team::print()
     {
-        // add info about the team
+        cout << "Team (" << this->getLeader()->getName();
+        cout << ") has " << this->stillAlive() << " / " << this->getMembers().size() << " members alive" << endl;
         for (auto champion : this->champions)
         {
             champion->print();
@@ -141,6 +142,7 @@ namespace ariel
 
     void Team2::add(Character *champion)
     {
+        add_validation(champion, this->getMembers());
         this->champions.push_back(champion);
     }
 

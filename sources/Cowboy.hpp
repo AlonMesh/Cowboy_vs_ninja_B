@@ -60,6 +60,8 @@ namespace ariel {
          * @return The amount of ammo left in the cowboy's gun.
          */
         int getAmmo();
+
+        void print() const override;
     };
 }
 

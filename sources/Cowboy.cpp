@@ -46,5 +46,13 @@ namespace ariel {
     int Cowboy::getAmmo() {
         return this->ammo;
     }
+
+    void Cowboy::print() const {
+        cout << "\t" << this->name << " (Cowboy):" << endl;
+        cout << "\t\tStatus: " << (this->isAlive() ? "Alive" : "Dead") << " (" << getHealthPoints() << " / " << COWBOY_HP << ")" << endl;
+        cout << "\t\tLocation: ";
+        getLocation().print();
+        cout << endl;
+    }
     
 } // namespace ariel
