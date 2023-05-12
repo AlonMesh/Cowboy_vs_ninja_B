@@ -16,24 +16,40 @@ namespace ariel {
             int speed;
         
         protected:
-            // "Superior" Consturctor of all ninjas
+            /**
+             * @brief A protected constructor used only by derived classes of Ninja.
+             * 
+             * @param name The name of the ninja.
+             * @param location The location of the ninja.
+             * @param healthPoints The health points of the ninja.
+             * @param speed The speed of the ninja.
+             */
             Ninja(string name, Point location, int healthPoints, int speed);
+
         public:
+            // A virtual destructor for the Ninja class.
             virtual ~Ninja() = default;
 
-            // Moving throw a given enemy
+            /**
+             * A function that moves the ninja through a given enemy.
+             * @param enemy A pointer to the enemy to move through.
+             */
             void move(Character* enemy);
             
-            // Deal massive damage to an enemey if he's close enough
+            /**
+             * A function that deals massive damage to an enemy if he's close enough.
+             * @param enemy A pointer to the enemy to deal damage to.
+             */
             void slash(Character* enemy);
 
-            // mine
+            // Returns the speed of the ninja
             int getSpeed();
 
-            // mine
+            // A function that controls the ninja's action against the enemy
             void actionControl(Character* enemy);
 
-            virtual void print() const = 0; // pure virtual function
+            // A pure virtual function that prints the ninja's details
+            virtual void print() const = 0;
     };
 
     class YoungNinja : public Ninja {

@@ -8,25 +8,25 @@ using namespace std;
 TEST_CASE("Point initialize") {
     // Default constructor
     Point p1 = Point();
-    CHECK_EQ(p1.get_x(), 0.0);
-    CHECK_EQ(p1.get_y(), 0.0);
+    CHECK_EQ(p1.getx(), 0.0);
+    CHECK_EQ(p1.gety(), 0.0);
 
     // Constructor with two doubles
     Point p2(1.0, 2.0);
-    CHECK_EQ(p2.get_x(), 1.0);
-    CHECK_EQ(p2.get_y(), 2.0);
+    CHECK_EQ(p2.getx(), 1.0);
+    CHECK_EQ(p2.gety(), 2.0);
 
     // Verify that the default constructor is equivalent to the constructor with two zeros
     Point p3(0.0, 0.0);
-    CHECK_EQ(p1.get_x(), p3.get_x());
-    CHECK_EQ(p1.get_y(), p3.get_y());
+    CHECK_EQ(p1.getx(), p3.getx());
+    CHECK_EQ(p1.gety(), p3.gety());
 
     /* The Point class allows for convenient initialization using two integers
     which are automatically converted to doubles. This test simply verifies
     that this automatic conversion works as expected.*/
     Point p(3, 4);
-    CHECK_EQ(p.get_x(), static_cast<double>(3));
-    CHECK_EQ(p.get_y(), static_cast<double>(4));
+    CHECK_EQ(p.getx(), static_cast<double>(3));
+    CHECK_EQ(p.gety(), static_cast<double>(4));
 
     // The gameboard is the first quadrant, which means X and Y must be always non-negative
     CHECK_THROWS_AS(Point(-1, 0), invalid_argument);
@@ -69,8 +69,8 @@ TEST_CASE("moveTowards function") {
     Point resultPoint = Point::moveTowards(currentPoint, targetPoint, distance);
 
     // If 'currentPoint' is exactly 'distance' away from 'targetPoint', return 'targetPoint'.
-    CHECK_EQ(resultPoint.get_x(), targetPoint.get_x());
-    CHECK_EQ(resultPoint.get_y(), targetPoint.get_y());
+    CHECK_EQ(resultPoint.getx(), targetPoint.getx());
+    CHECK_EQ(resultPoint.gety(), targetPoint.gety());
 
     // Reset
     currentPoint = Point(0, 0);
@@ -80,8 +80,8 @@ TEST_CASE("moveTowards function") {
     resultPoint = Point::moveTowards(currentPoint, targetPoint, distance);
 
     // If 'currentPoint' is already within 'distance' of 'targetPoint', return 'targetPoint'.
-    CHECK(resultPoint.get_x() == targetPoint.get_x());
-    CHECK(resultPoint.get_y() == targetPoint.get_y());
+    CHECK(resultPoint.getx() == targetPoint.getx());
+    CHECK(resultPoint.gety() == targetPoint.gety());
 
     // Reset
     currentPoint = Point(0, 0);
@@ -107,14 +107,14 @@ TEST_CASE("Character initialization") {
     /**
      * Cowboy represents any Character.
      * The function in this test belongs to Character.
-     * Unique functions of Cowboy will be tested later.
+     * Unique functions of Cowboy and Ninja will be tested later.
      */ 
     Cowboy* c1 = new Cowboy("Champ", Point());
 
     // Name, location, and HP were set correctly
     CHECK_EQ(c1->getName(), "Champ");
-    CHECK_EQ(c1->getLocation().get_x(), 0);
-    CHECK_EQ(c1->getLocation().get_y(), 0);
+    CHECK_EQ(c1->getLocation().getx(), 0);
+    CHECK_EQ(c1->getLocation().gety(), 0);
     CHECK_EQ(c1->getHealthPoints(), 110);
 
     // The created Character is alive
@@ -170,8 +170,8 @@ TEST_CASE("Cowboy initialization") {
 
     // Character's fields are like expected when creating a Cowboy
     CHECK_EQ(cowboy1->getName(), "Cow");
-    CHECK_EQ(cowboy1->getLocation().get_x(), 0);
-    CHECK_EQ(cowboy1->getLocation().get_y(), 0);
+    CHECK_EQ(cowboy1->getLocation().getx(), 0);
+    CHECK_EQ(cowboy1->getLocation().gety(), 0);
     CHECK_EQ(cowboy1->getHealthPoints(), 110); // A cowboy has 110 HP
 
     // Cowboy's fields are like expected when creating a Cowboy
@@ -287,21 +287,20 @@ TEST_CASE("Ninja Initialization") {
     delete ninja3;
 }
 
-TEST_CASE("Ninja move and slash functions") {
+TEST_CASE("Ninja move() and slash() functions") {
     YoungNinja* ninja1 = new YoungNinja("a", Point());
     Cowboy* enemy1 = new Cowboy("Enemy", Point(10, 10));
     // Distance now: 14.14213 / ninja1 speed: 14
 
-    // Ninja can't slash an enemy if he's more than 1 distance away
-    CHECK_THROWS(ninja1->slash(enemy1));
+    // Ninja's slash will do nothing to an enemy if he's more than 1 distance away
+    int hpBeforeSlash = enemy1->getHealthPoints();
+    ninja1->slash(enemy1);
+    CHECK_EQ(enemy1->getHealthPoints(), hpBeforeSlash);
 
     ninja1->move(enemy1); // Current distace: 0.14213
 
-    // Ninja can slash an enemy if he's less than 1 distance away
-    CHECK_NOTHROW(ninja1->slash(enemy1));
-    
-    // Ninja's slash() should deal 13 damage
-    int expectedHP = enemy1->getHealthPoints() - 13; // if it is 31 instead of 13, change it.
+    // Ninja's slash will deal damagea to an enemy if he's less than 1 distance away
+    int expectedHP = enemy1->getHealthPoints() - NINJA_DMG; // NINJA_DMG == 13
     ninja1->slash(enemy1);
     CHECK_EQ(enemy1->getHealthPoints(), expectedHP);
 
@@ -310,17 +309,19 @@ TEST_CASE("Ninja move and slash functions") {
 
     TrainedNinja* ninja2 = new TrainedNinja("a", Point());
     Cowboy* enemy2 = new Cowboy("Enemy", Point(5, 12));
-    // Distance now: 13 / ninja1 speed: 12
+    // Distance now: 13 / ninja2 speed: 12
 
     ninja2->move(enemy2); // Current distace: 1
 
-    // Ninja can't slash an enemy if he's exactly 1 distance away (readme rules)
-    CHECK_THROWS(ninja2->slash(enemy2));
+    // Ninja's slash will do nothing to an enemy if he's exactly 1 distance away (readme rules)
+    hpBeforeSlash = enemy2->getHealthPoints();
+    ninja2->slash(enemy2);
+    CHECK_EQ(enemy2->getHealthPoints(), hpBeforeSlash);
 
-    // When ninja's distance to victim is shorter than his speed, he will get to the victim
+    // When ninja's distance to victim is shorter than his speed value, he will get to the victim
     ninja2->move(enemy2);
-    CHECK_EQ(ninja2->getLocation().get_x(), enemy2->getLocation().get_x());
-    CHECK_EQ(ninja2->getLocation().get_y(), enemy2->getLocation().get_y());
+    CHECK_EQ(ninja2->getLocation().getx(), enemy2->getLocation().getx());
+    CHECK_EQ(ninja2->getLocation().gety(), enemy2->getLocation().gety());
 
     // Ninja can't slash himself
     CHECK_THROWS(ninja2->slash(ninja2));
@@ -336,7 +337,7 @@ TEST_CASE("team Initialization") {
     Cowboy* cowboy1 = new Cowboy("Champ", Point());
     Team team1(cowboy1);
 
-    // Basic funcitons:
+    // Basic funcitons of team
     CHECK_EQ(team1.stillAlive(), 1);
     CHECK_EQ(team1.getLeader(), cowboy1);
 

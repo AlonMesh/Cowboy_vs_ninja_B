@@ -4,6 +4,7 @@ namespace ariel {
     Character::Character(const string& name, Point location, int healthPoints)
     : name(name), location(location), healthPoints(healthPoints) {
         this->teamMember = false;
+        this->dmgDealt = 0;
     };
     Character::Character() : name(""), healthPoints(DEFAULT_HP), location(Point(0,0)) {
         this->teamMember = false;
@@ -72,6 +73,14 @@ namespace ariel {
         }
 
         return closest;
+    }
+
+    int Character::GetDmgDealt() {
+        return this->dmgDealt;
+    }
+
+    void Character::raiseDmgDealt(int number) {
+        this->dmgDealt += number;
     }
 
 }

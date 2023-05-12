@@ -55,6 +55,8 @@ int main() {
    uniform_int_distribution<> distr_x(0, 100);
    uniform_int_distribution<> distr_y(0, 100);
 
+   for (int i = 0 ; i < 1 ; i++) {
+
    Cowboy* cowboy_c = new Cowboy("LeaderC", Point(distr_x(gen), distr_y(gen)));
    Team team_c(cowboy_c);
    for (int i = 0; i < 9; i++) {
@@ -93,9 +95,19 @@ int main() {
       }
    }
 
-   team_c.print();
-   team_d.print();
+   while(team_c.stillAlive() > 0 && team_d.stillAlive() > 0){
+      team_c.attack(&team_d);
+      if (team_c.stillAlive() > 0 && team_d.stillAlive() > 0) {
+         team_d.attack(&team_c);
+      }
+      // team_A.print();
+      // team_B.print();
+   }
 
+   for (auto member : team_c.getMembers()) {
+      cout << member->getName() << " dealt " << member->GetDmgDealt() << " dmg" << endl;
+   }
+   }
    // >----mine-----
      return 0; // no memory issues. Team should free the memory of its members. both a and b teams are on the stack. 
 

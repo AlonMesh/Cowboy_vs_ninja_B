@@ -3,6 +3,11 @@
 #include <iostream>
 
 namespace ariel {
+    /**
+     * Represents the location of a Character in the gameboard
+     * @param x_value The x value of the Point object
+     * @param y_value The y value of the Point object.
+    */
     class Point {
         private:
             double x_value;
@@ -32,6 +37,9 @@ namespace ariel {
              */
             double distance(Point other);
 
+            /**
+             * Prints Point x and y value accurding to a format (x, y)
+            */
             void print();
 
             /**
@@ -46,7 +54,7 @@ namespace ariel {
             static Point moveTowards(Point currentPoint, Point targetPoint, int distance);
 
             /**
-             * @brief Determines whether a point is on the line defined by two other points.
+             * Determines whether a point is on the line defined by two other points.
              * 
              * @param point1 The first point that defines the line.
              * @param point2 The second point that defines the line.
@@ -54,9 +62,15 @@ namespace ariel {
              */
             bool isOnLine(Point point1, Point point2);
 
-            double get_x();
+            /**
+             * Return x value of a point
+            */
+            double getx();
 
-            double get_y();
+            /**
+             * Return y value of a point
+            */
+            double gety();
     };
 }
 #endif

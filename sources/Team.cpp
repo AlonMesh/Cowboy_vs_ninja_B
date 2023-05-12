@@ -84,6 +84,7 @@ namespace ariel
                     if (cowboy->hasboolets())
                     {
                         cowboy->shoot(target);
+                        cowboy->raiseDmgDealt(COWBOY_DMG);
                     }
                     else
                     {
@@ -92,8 +93,21 @@ namespace ariel
                 }
                 else
                 {
-                    Ninja *ninja = dynamic_cast<Ninja *>(champion);
-                    ninja->actionControl(target);
+                    if (dynamic_cast<YoungNinja*>(champion) != nullptr) {
+                        YoungNinja *ninja = dynamic_cast<YoungNinja*>(champion);
+                        ninja->actionControl(target);
+                        ninja->raiseDmgDealt(NINJA_DMG);
+                    }
+                    else if (dynamic_cast<TrainedNinja*>(champion) != nullptr) {
+                        TrainedNinja *ninja = dynamic_cast<TrainedNinja*>(champion);
+                        ninja->actionControl(target);
+                        ninja->raiseDmgDealt(NINJA_DMG);
+                    }
+                    else {
+                        OldNinja *ninja = dynamic_cast<OldNinja*>(champion);
+                        ninja->actionControl(target);
+                        ninja->raiseDmgDealt(NINJA_DMG);
+                    }
                 }
 
                 if (!target->isAlive()) {

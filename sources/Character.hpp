@@ -8,6 +8,11 @@ using namespace std;
 
 namespace ariel
 {
+    /**
+     * Abstract class representing a character in a game.
+     * This class represents the common properties and behaviors of characters in a game. It's an abstract class and cannot be
+     * instantiated directly. It's intended to be inherited by more specific character classes, like Cowboy and Ninjas.
+     */
     class Character
     {
     protected:
@@ -15,6 +20,7 @@ namespace ariel
         Point location;
         int healthPoints;
         bool teamMember;
+        int dmgDealt;
 
     public:
         /**
@@ -99,21 +105,29 @@ namespace ariel
         // Returns the name of the Character
         string getName();
 
-        // Returns the position of the Character
+        // Returns Point object with the same x and y values of the position of the Character
         Point getLocation() const;
 
-        // mine*****
+        // Returns the current HP of a Character
         int getHealthPoints() const;
 
-        // mine*******
+        /**
+         * Change the location of a Character
+         * @param point the new location
+         */
         void setLocation(Point point);
 
-        // mine*******
+        // Change the membership status of a Character
         void joinedTeam();
 
+        // Return true if a Character is a member of a team
         bool isInTeam();
 
-        // mine*****
+        /**
+         * Find the closest Chracter to a given Character from a group of Characters
+         * @param characters Group of Characters
+         * @returns Pointer to the closest member in 'characters' to the given Character
+         */
         Character* findClosestCharacter(vector<Character*> characters);
 
         /**
@@ -121,6 +135,12 @@ namespace ariel
          * and location.
          */
         virtual void print() const = 0; // pure virtual function
+
+        // Get the amount of damage a Character dealt
+        int GetDmgDealt();
+
+        // Sum the amount of damage a Character dealt
+        void raiseDmgDealt(int number);
     };
 }
 #endif

@@ -12,11 +12,11 @@ namespace ariel {
     Point::Point() : x_value(0), y_value(0) {};
     
     double Point::distance(Point other) {
-        return sqrt(pow((this->get_x()-other.get_x()), 2) + pow((this->get_y()-other.get_y()), 2));
+        return sqrt(pow((this->getx()-other.getx()), 2) + pow((this->gety()-other.gety()), 2));
     }
     
     void Point::print() {
-        std::cout << "(" << this->get_x() << ", " << this->get_y() << ")" << std::endl;
+        std::cout << "(" << this->getx() << ", " << this->gety() << ")" << std::endl;
     }
     
     Point Point::moveTowards(Point currentPoint, Point targetPoint, int distance) {
@@ -34,16 +34,16 @@ namespace ariel {
         }
 
         // Calculate the displacement vector between the current and target points
-        double dx = targetPoint.get_x() - currentPoint.get_x();
-        double dy = targetPoint.get_y() - currentPoint.get_y();
+        double dx = targetPoint.getx() - currentPoint.getx();
+        double dy = targetPoint.gety() - currentPoint.gety();
 
         // Calculate the unit vector of the displacement vector
         double unitDx = dx / dist;
         double unitDy = dy / dist;
 
         // Calculate the new x and y coordinates that are distance away from the current point
-        double newX = currentPoint.get_x() + (unitDx * distance);
-        double newY = currentPoint.get_y() + (unitDy * distance);
+        double newX = currentPoint.getx() + (unitDx * distance);
+        double newY = currentPoint.gety() + (unitDy * distance);
 
         // Create and return the new point
         return Point(newX, newY);
@@ -53,20 +53,20 @@ namespace ariel {
         // Check if the point is on the line defined by point1 and point2
         // using the equation of a line: y - y1 = (y2 - y1)/(x2 - x1) * (x - x1)
         // Rearrange the equation to: (y - y1) * (x2 - x1) - (x - x1) * (y2 - y1) = 0
-        int x1 = point1.get_x();
-        int y1 = point1.get_y();
-        int x2 = point2.get_x();
-        int y2 = point2.get_y();
-        int x = this->get_x();
-        int y = this->get_y();
+        int x1 = point1.getx();
+        int y1 = point1.gety();
+        int x2 = point2.getx();
+        int y2 = point2.gety();
+        int x = this->getx();
+        int y = this->gety();
         return (y - y1) * (x2 - x1) - (x - x1) * (y2 - y1) == 0;
     }
     
-    double Point::get_x() {
+    double Point::getx() {
         return this->x_value;
     }
     
-    double Point::get_y() {
+    double Point::gety() {
         return this->y_value;
     }
 }
