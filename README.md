@@ -40,11 +40,7 @@ Example usage:
 
 2. Create teams using the `Team` class and add characters to the teams.
 
-3. Simulate interactions between characters and teams by calling the appropriate methods, such as attacking enemies or moving characters.
-
-4. Retrieve information about characters, teams, and their attributes to analyze the game state and make decisions.
-
-Please refer to the code documentation and class definitions for detailed information on available methods, attributes, and their usage. My recommendation:
+3. Simulate interactions between characters and teams by calling the appropriate methods, such as attacking enemies or moving characters. My recommendation:
 
     while(team_A.stillAlive() > 0 && team_B.stillAlive() > 0){
         team_A.attack(&team_B);
@@ -52,6 +48,10 @@ Please refer to the code documentation and class definitions for detailed inform
         // team_A.print();
         // team_B.print();
     }
+
+4. Retrieve information about characters, teams, and their attributes to analyze the game state and make decisions.
+
+Please refer to the code documentation and class definitions for detailed information on available methods, attributes, and their usage. 
 
 ## Contributing
 
