@@ -42,12 +42,12 @@ Example usage:
 
 3. Simulate interactions between characters and teams by calling the appropriate methods, such as attacking enemies or moving characters. My recommendation:
 
-    while(team_A.stillAlive() > 0 && team_B.stillAlive() > 0){
-        team_A.attack(&team_B);
-        team_B.attack(&team_A);
-        // team_A.print();
-        // team_B.print();
-    }
+     while(team_A.stillAlive() > 0 && team_B.stillAlive() > 0){
+         team_A.attack(&team_B);
+         team_B.attack(&team_A);
+         // team_A.print();
+         // team_B.print();
+     }
 
 4. Retrieve information about characters, teams, and their attributes to analyze the game state and make decisions.
 
