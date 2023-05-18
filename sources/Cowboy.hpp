@@ -1,13 +1,10 @@
 #ifndef COWBOY_HPP
 #define COWBOY_HPP
 #include "Character.hpp"
-#define COWBOY_HP 110
-#define COWBOY_AMMO 6
-#define COWBOY_DMG 10
-
-//TODO: Print()
-
 namespace ariel {
+    constexpr int COWBOY_HP = 110;
+    constexpr int COWBOY_AMMO = 6;
+    constexpr int COWBOY_DMG = 10;
     class Cowboy : public Character {
         private:
             int ammo;
@@ -27,8 +24,6 @@ namespace ariel {
          * the location to the origin (0,0) and the ammo to default value.
          */
         Cowboy();
-
-        virtual ~Cowboy() = default;
         
         /**
          * Shoots the enemy character with a cowboy's gun. Decrase 1 ammo.
@@ -61,7 +56,7 @@ namespace ariel {
          */
         int getAmmo();
 
-        void print() const override;
+        string print() const override;
     };
 }
 

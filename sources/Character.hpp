@@ -3,11 +3,12 @@
 #include <string>
 #include <vector>
 #include "Point.hpp"
-#define DEFAULT_HP 100
 using namespace std;
 
 namespace ariel
 {
+    constexpr int DEFAULT_HP = 100;
+    
     /**
      * Abstract class representing a character in a game.
      * This class represents the common properties and behaviors of characters in a game. It's an abstract class and cannot be
@@ -15,12 +16,14 @@ namespace ariel
      */
     class Character
     {
-    protected:
+    private:
         string name;
         Point location;
         int healthPoints;
         bool teamMember;
         int dmgDealt;
+
+    protected:
 
     public:
         /**
@@ -38,15 +41,14 @@ namespace ariel
          * and the location to the origin (0,0).
          */
         Character();
+        
         virtual ~Character() = default;
 
         // Copy Constructor
-        Character(const Character &other)
-        {
-            name = other.name;
-            location = other.location;
-            healthPoints = other.healthPoints;
-        }
+        Character(const Character& other)
+            : name(other.name), location(other.location), healthPoints(other.healthPoints),
+            teamMember(other.teamMember), dmgDealt(other.dmgDealt)
+        {}
 
         // Copy Assignment Operator
         Character &operator=(const Character &other)
@@ -58,16 +60,18 @@ namespace ariel
             name = other.name;
             location = other.location;
             healthPoints = other.healthPoints;
+            teamMember = other.teamMember;
+            dmgDealt = other.dmgDealt;
             return *this;
         }
 
         // Move Constructor
-        Character(Character &&other) noexcept
-        {
-            name = move(other.name);
-            location = move(other.location);
-            healthPoints = move(other.healthPoints);
-        }
+        Character(Character&& other) noexcept
+            : name(std::move(other.name)), location(other.location),
+            healthPoints(other.healthPoints), teamMember(other.teamMember),
+            dmgDealt(other.dmgDealt)
+        {}
+
 
         // Move Assignment Operator
         Character &operator=(Character &&other) noexcept
@@ -77,8 +81,8 @@ namespace ariel
                 return *this;
             }
             name = move(other.name);
-            location = move(other.location);
-            healthPoints = move(other.healthPoints);
+            location = other.location;
+            healthPoints = other.healthPoints;
             return *this;
         }
 
@@ -103,7 +107,7 @@ namespace ariel
         void hit(int damage);
 
         // Returns the name of the Character
-        string getName();
+        string getName() const;
 
         // Returns Point object with the same x and y values of the position of the Character
         Point getLocation() const;
@@ -134,7 +138,7 @@ namespace ariel
          * Print information about the Character to the console, including name, status (alive/dead), health points,
          * and location.
          */
-        virtual void print() const = 0; // pure virtual function
+        virtual string print() const = 0; // pure virtual function, string due readmerules.
 
         // Get the amount of damage a Character dealt
         int GetDmgDealt();

@@ -21,7 +21,7 @@ namespace ariel {
     void Character::hit(int damage) {
         // Leagal damage is 10 or 13, but cuz test issues it is positive
         if (damage <= 0) {
-            throw std::runtime_error("Damage taken must be positive");
+            throw std::invalid_argument("Damage taken must be positive");
         }
 
         if (!this->isAlive()) {
@@ -35,7 +35,7 @@ namespace ariel {
         }
     }
 
-    string Character::getName() {
+    string Character::getName() const {
         return this->name;
     }
 

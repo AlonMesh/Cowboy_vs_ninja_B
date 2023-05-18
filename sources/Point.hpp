@@ -51,7 +51,7 @@ namespace ariel {
              * @throws invalid_argument if the distance is negative
              * @return the new point that is at least the specified distance away from the current point and as close as possible to the target point
              */
-            static Point moveTowards(Point currentPoint, Point targetPoint, int distance);
+            static Point moveTowards(Point currentPoint, Point targetPoint, double distance);
 
             /**
              * Determines whether a point is on the line defined by two other points.
