@@ -164,7 +164,7 @@ namespace ariel
         cout << ") has " << this->stillAlive() << " / " << this->getMembers().size() << " members alive" << endl;
         for (auto member : this->members)
         {
-            member->print();
+            cout << member->print() << endl;
         }
     }
 
